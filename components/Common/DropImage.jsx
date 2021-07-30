@@ -41,12 +41,16 @@ const DropImage = ({
           >
             {mediaPreview === null ? (
               <>
-                <Segment color={highLighted ? "green" : ""} placeholder basic>
+                <Segment
+                  color={highLighted ? "green" : "grey"}
+                  placeholder
+                  basic
+                >
                   <Header icon>
                     <Icon
                       name="file image outline"
                       style={{ cursor: "pointer" }}
-                      onclick={() => inputRef.current.click()}
+                      onClick={() => inputRef.current.click()}
                     />
                     Drag and Drop to upload image
                   </Header>

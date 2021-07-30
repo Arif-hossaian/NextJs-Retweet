@@ -104,7 +104,6 @@ const Signup = () => {
               link: true,
               onClick: () => setShowPassword(!showPassword),
             }}
-            iconPosition="right"
           />
           <CustomFormInput
             loading={userNameLoading}

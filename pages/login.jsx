@@ -65,7 +65,6 @@ const Login = () => {
               link: true,
               onClick: () => setShowPassword(!showPassword),
             }}
-            iconPosition="right"
           />
           <Divider hidden />
           <Button

@@ -2,7 +2,7 @@ import Layout from "../components/Layout/Layout";
 import "semantic-ui-css/semantic.min.css";
 import "nprogress/nprogress.css";
 
-function MyApp({ Component, pageProps }) {
+const MyApp = ({ Component, pageProps }) => {
   return (
     <>
       <Layout>
@@ -10,6 +10,6 @@ function MyApp({ Component, pageProps }) {
       </Layout>
     </>
   );
-}
+};
 
 export default MyApp;

@@ -6,7 +6,7 @@ const Navbar = () => {
   const router = useRouter();
   const isActive = (route) => router.pathname === route;
   return (
-    <Menu fluid borderless style={{marginTop:"20px"}}>
+    <Menu fluid borderless style={{ marginTop: "20px" }}>
       <Container text>
         <Link href="/login" passHref={true}>
           <Menu.Item header active={isActive("/login")} position="right">
