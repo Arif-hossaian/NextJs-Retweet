@@ -9,7 +9,7 @@ import CustomFormInput from "../components/custom/CustomeFormInput";
 import OthersInputFields from "../components/Common/OthersInputFields";
 import DropImage from "../components/Common/DropImage";
 const regexUserName = /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/;
-let cencel;
+let cancel;
 
 const Signup = () => {
   const [user, setUser] = useState({
@@ -39,7 +39,7 @@ const Signup = () => {
     const { name, value, files } = e.target;
     if (name === "media") {
       setMedia(files[0]);
-      setMediaPreview(URL.createObjectURL(files[0]));
+      return setMediaPreview(URL.createObjectURL(files[0]));
     }
     setUser({ ...user, [name]: value });
   };
@@ -56,19 +56,20 @@ const Signup = () => {
     setUserNameLoading(true);
     try {
       cancel && cancel();
-      const CancelToken = Axios.CancelToken();
+      const CancelToken = Axios.CancelToken;
       const res = await Axios.get(`${baseUrl}/api/signup/${username}`, {
         cancelToken: new CancelToken((canceler) => {
           cancel = canceler;
         }),
       });
-      if (errorMsg !== null) setErrorMsg(null);
       if (res.data === "Available") {
+        if (errorMsg !== null) setErrorMsg(null);
         setUserNameAvailable(true);
         setUser({ ...user, username });
       }
     } catch (error) {
       setErrorMsg("User name not Available");
+      setUserNameAvailable(false)
     }
     setUserNameLoading(false);
   };
@@ -155,7 +156,6 @@ const Signup = () => {
             label="Enter your User Name"
             placeholder="UserName"
             value={username}
-            U
             onChange={(e) => {
               setUserName(e.target.value);
               if (regexUserName.test(e.target.value)) {
