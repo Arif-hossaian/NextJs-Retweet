@@ -56,6 +56,11 @@ router.post("/", async (req, res) => {
       return res.status(401).send("User already registered");
     }
 
+    user = await UserModel.findOne({ username: username.toLowerCase() });
+    if (user) {
+      return res.status(401).send("Username already taken");
+    }
+
     user = new UserModel({
       name,
       email: email.toLowerCase(),
@@ -92,4 +97,4 @@ router.post("/", async (req, res) => {
   }
 });
 
-module.exports = router;
+module.exports = router

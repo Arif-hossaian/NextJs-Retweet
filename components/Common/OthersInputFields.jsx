@@ -2,7 +2,6 @@ import {
   Form,
   Button,
   Message,
-  Segment,
   TextArea,
   Divider,
 } from "semantic-ui-react";
