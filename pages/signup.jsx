@@ -1,10 +1,15 @@
 import { FooterMsg, HeaderMsg } from "../components/Common/WelcomeMsg";
 import { useState, useEffect, useRef } from "react";
 import { Form, Button, Message, Segment, Divider } from "semantic-ui-react";
+import Axios from "axios";
+import baseUrl from "../utils/baseUrl";
+import { registerUser } from "../utils/authUser";
+import uploadePic from "../utils/uploadPicToCloudinary";
 import CustomFormInput from "../components/custom/CustomeFormInput";
 import OthersInputFields from "../components/Common/OthersInputFields";
 import DropImage from "../components/Common/DropImage";
 const regexUserName = /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/;
+let cencel;
 
 const Signup = () => {
   const [user, setUser] = useState({
@@ -22,7 +27,7 @@ const Signup = () => {
   const [errorMsg, setErrorMsg] = useState(null);
   const [formLoading, setFormLoading] = useState(false);
   const [submitDisabled, setSubmitDisabled] = useState(true);
-  const [userName, setUserName] = useState("");
+  const [username, setUserName] = useState("");
   const [userNameLoading, setUserNameLoading] = useState(false);
   const [userNameAvailable, setUserNameAvailable] = useState(false);
   const [media, setMedia] = useState(null);
@@ -30,9 +35,6 @@ const Signup = () => {
   const [highLighted, setHighLighted] = useState(false);
   const inputRef = useRef();
   const { name, email, password, bio } = user;
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  };
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === "media") {
@@ -41,6 +43,7 @@ const Signup = () => {
     }
     setUser({ ...user, [name]: value });
   };
+
   useEffect(() => {
     const isUser = Object.values({ name, email, password, bio }).every((item) =>
       Boolean(item)
@@ -48,6 +51,47 @@ const Signup = () => {
     isUser ? setSubmitDisabled(false) : setSubmitDisabled(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
+
+  const checkUserName = async () => {
+    setUserNameLoading(true);
+    try {
+      cancel && cancel();
+      const CancelToken = Axios.CancelToken();
+      const res = await Axios.get(`${baseUrl}/api/signup/${username}`, {
+        cancelToken: new CancelToken((canceler) => {
+          cancel = canceler;
+        }),
+      });
+      if (errorMsg !== null) setErrorMsg(null);
+      if (res.data === "Available") {
+        setUserNameAvailable(true);
+        setUser({ ...user, username });
+      }
+    } catch (error) {
+      setErrorMsg("User name not Available");
+    }
+    setUserNameLoading(false);
+  };
+
+  useEffect(
+    () => {
+      username === "" ? setUserNameAvailable(false) : checkUserName();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [username]
+  );
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormLoading(true);
+    let profilePicUrl;
+    if (media !== null) {
+      profilePicUrl = await uploadePic(media);
+    }
+    if (media !== null && !profilePicUrl) {
+      return setErrorMsg("Error to uploade profile image");
+    }
+    await registerUser(user, profilePicUrl, setErrorMsg, setFormLoading);
+  };
   return (
     <>
       <HeaderMsg />
@@ -110,7 +154,8 @@ const Signup = () => {
             error={!userNameAvailable}
             label="Enter your User Name"
             placeholder="UserName"
-            value={userName}
+            value={username}
+            U
             onChange={(e) => {
               setUserName(e.target.value);
               if (regexUserName.test(e.target.value)) {
