@@ -1,6 +1,7 @@
 import { FooterMsg, HeaderMsg } from "../components/Common/WelcomeMsg";
 import { useState, useEffect } from "react";
 import { Form, Button, Message, Segment, Divider } from "semantic-ui-react";
+import { loginUser } from "../utils/authUser";
 import CustomFormInput from "../components/custom/CustomeFormInput";
 
 const Login = () => {
@@ -13,12 +14,13 @@ const Login = () => {
   const [errorMsg, setErrorMsg] = useState(null);
   const [formLoading, setFormLoading] = useState(false);
   const [submitDisabled, setSubmitDisabled] = useState(true);
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  };
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser({ ...user, [name]: value });
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await loginUser(user, setErrorMsg, setFormLoading);
   };
   useEffect(() => {
     const isUser = Object.values({ email, password }).every((item) =>
